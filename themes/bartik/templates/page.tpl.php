@@ -85,12 +85,6 @@
  * @see html.tpl.php
  */
 ?>
-<?php
-drupal_add_library('system', 'ui.accordion');
-drupal_add_js('(function($) {$(document).ready(function() {
-  $("#accordion").accordion({ collapsible: true, header: "h3", animated: false, autoHeight: false, heightStyle: "content"}); 
-});}(jQuery));', 'inline');
-?>
 <div id="page-wrapper"><div id="page">
 
   <div id="header" class="<?php print $secondary_menu ? 'with-secondary-menu': 'without-secondary-menu'; ?>"><div class="section clearfix">

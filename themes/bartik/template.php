@@ -153,9 +153,4 @@ function bartik_field__taxonomy_term_reference($variables) {
   $output = '<div class="' . $variables['classes'] . (!in_array('clearfix', $variables['classes_array']) ? ' clearfix' : '') . '"' . $variables['attributes'] .'>' . $output . '</div>';
 
   return $output;
-} /* Can't get this function to work
-function themename_preprocess_page (&$vars) {
-    drupal_add_library('system', 'ui.accordion');
-    drupal_add_js('jQuery(document).ready(function(){jQuery("#accordion").accordion();});', 'inline');
 }
-*/
