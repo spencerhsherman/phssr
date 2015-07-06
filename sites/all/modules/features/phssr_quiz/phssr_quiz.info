@@ -18,3 +18,4 @@ features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:2
 features[variable][] = quiz_admin_review_options_end
 features[variable][] = quiz_admin_review_options_question
+files[] = phssr_quiz.classes.inc

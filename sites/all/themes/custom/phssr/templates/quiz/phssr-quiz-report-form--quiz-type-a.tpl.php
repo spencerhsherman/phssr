@@ -33,8 +33,7 @@
     else {
       continue;
     }
-    if (!empty($sub_form['question']) && empty($sub_form['#no_report'])):
-    ?>
+    if (!empty($sub_form['question']) && empty($sub_form['#no_report'])): ?>
     <div class="quiz-report-row clearfix">
       <div class="quiz-report-question dt">
         <div class="quiz-report-question-header clearfix">
