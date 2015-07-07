@@ -1,0 +1,8 @@
+name = Quiz Likert Scale
+package = Quiz Question
+description = Likert Scale question type for quiz.
+core = 7.x
+dependencies[] = quiz
+dependencies[] = quiz_question
+files[] = likert_scale.classes.inc
+
