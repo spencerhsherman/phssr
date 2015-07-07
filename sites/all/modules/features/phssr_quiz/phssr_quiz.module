@@ -42,7 +42,43 @@ function phssr_quiz_theme() {
  * Implements hook_preprocess_THEME_NAME().
  */
 function phssr_quiz_preprocess_phssr_quiz_report_form(&$variables) {
-  // Add custom variables.
+  $form = $variables['form'];
+
+  foreach ($form as $key => $sub_form) {
+    if (!is_numeric($key)) {
+      continue;
+    }
+
+    // Add custom variables.
+    $variables['questions'][] = array(
+      'nid' => $sub_form['nid']['#value'],
+      'result_id' => $sub_form['result_id']['#value'],
+      'response' => array(
+        '#markup' => $sub_form['response']['#markup'],
+        '#data' => $sub_form['response']['#data'],
+        '#labels' => $sub_form['response']['#labels'],
+      ),
+      'question' => $sub_form['question'],
+      'max_score' => $sub_form['max_score']['#value'],
+      'question_feedback' => $sub_form['question_feedback'],
+      'score_display' => array(
+        '#markup' => $sub_form['score_display']['#markup'],
+        '#data' => array(
+          'score' => $sub_form['score_display']['#data']['score'],
+          'max_score' => $sub_form['score_display']['#data']['max_score'],
+          'class' => $sub_form['score_display']['#data']['class'],
+        )
+      ),
+    );
+
+    // Array of values to hide in the template.
+    $variables['hide_form_element'][] = $key;
+  }
+
+
+
+
+
 
 
   // Template suggestions.
@@ -60,6 +96,18 @@ function phssr_quiz_preprocess_phssr_quiz_report_form(&$variables) {
 }
 
 /**
+ * Implements drupal_alter().
+ *
+ * Override the Classes.
+ */
+function phssr_quiz_quiz_question_info_alter(&$info) {
+  // Override Response Classes.
+  if (isset($info['multichoice'])) {
+    $info['multichoice']['response provider'] = "PhssrMultichoiceResponse";
+  }
+}
+
+/**
  * Implements hook_preprocess_THEME_NAME().
  */
 function phssr_quiz_preprocess_quiz_question_feedback(&$variables) {
@@ -67,7 +115,7 @@ function phssr_quiz_preprocess_quiz_question_feedback(&$variables) {
 }
 
 /**
- * OVER WRITE theme_quiz_result: See @quiz.pages.inc
+ * OVERWRITE theme_quiz_result: See @quiz.pages.inc
  * Theme the result page.
  *
  * @param $quiz
