@@ -995,6 +995,11 @@ class LikertScaleResponse extends QuizQuestionResponse {
 
     if ($this->canReview('score') || quiz_access_to_score()) {
       $out['score_display']['#markup'] = theme('quiz_question_score', array('score' => $score, 'max_score' => $this->getMaxScore(), 'class' => $class));
+      $out['score_display']['#data'] = array(
+        'score' => $score,
+        'max_score' => $this->getMaxScore(),
+        'class' => $class,
+      );
     }
 
     if ($rows) {

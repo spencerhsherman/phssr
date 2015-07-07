@@ -6,58 +6,89 @@
  */
 /*
  * Available variables:
- * $form - FAPI array
+ * $form - FAPI array. You can print this entire page with drupal_render_children($form) and the
+ *         default styling will be used.
  *
- * All questions are in form[x] where x is an integer.
+ * All questions are in $questions[x] where x is an integer.
  * Useful values:
- * $form[x]['question'] - the question as a FAPI array(usually a form field of type "markup")
- * $form[x]['score'] - the users score on the current question.(FAPI array usually of type "markup" or "textfield")
- * $form[x]['max_score'] - the max score for the current question.(FAPI array of type "value")
- * $form[x]['response'] - the users response, usually a FAPI array of type markup.
+ *
+ * $questions[x]['nid'] - The Drupal Node NID for the Question node.
+ * $questions[x]['result_id'] - The key value used in results specific database tables.
+ *
+ * $questions[x]['response']['#markup'] - Rendered HTML for the responses table derived from theme_quiz_question_feedback().
+ * $questions[x]['response']['#data'][x] - Row data passed to theme_table() that represents each row of data in the table.
+ * $questions[x]['response']['#labels'][x] - Header data passed to theme_table() that represents the header row of a table.
+ *
+ * $questions[x]['question'] - Render array for the actual Question text. Use drupal_render() to display.
+ *
+ * $questions[x]['max_score'] - Integer value for the max possible score.
+ *
+ * $questions[x]['question_feedback'] - ?
+ *
+ * $questions[x]['score_display']['#markup'] - Rendered HTML derived from theme_quiz_question_score().
+ * $questions[x]['score_display']['#data']['score'] - Integer value score for this question.
+ * $questions[x]['score_display']['#data']['max_score] - Integer value of the max possible score for this question.
+ * $questions[x]['score_display']['#data']['class'] - String value of the CSS class value passed to theme_quiz_question_score().
+ *
+ *
  */
+
+/**
+ * Hide Form Elements that are being "pretty" rendered.
+ * Do not remove this, or an ugly version of the question results
+ * will display below your themed version.
+ */
+if (isset($hide_form_element)) {
+  foreach ($hide_form_element as $key) {
+    hide($form[$key]);
+  }
+}
 ?>
-<?php if (isset($form[0]['question'])): ?>
-  <h2><?php print t('Question results'); ?></h2>
-<?php endif; ?>
+
+
+<h2><?php print t('Question results'); ?></h2>
 <div class="quiz-report">
-  <?php
-  foreach ($form as $key => &$sub_form):
-    if (is_numeric($key)) {
-      if (!empty($sub_form['#no_report'])) {
-        drupal_render($sub_form);
-      }
-      elseif (empty($sub_form['question'])) {
-        print drupal_render($sub_form);
-      }
-    }
-    else {
-      continue;
-    }
-    if (!empty($sub_form['question']) && empty($sub_form['#no_report'])):
-    ?>
+  <?php foreach($questions as $question) : ?>
     <div class="quiz-report-row clearfix">
       <div class="quiz-report-question dt">
         <div class="quiz-report-question-header clearfix">
-          <?php print drupal_render($sub_form['score_display']); ?>
+          <?php print drupal_render($question['score_display']); ?>
           <h3><?php print t('Question') ?></h3>
         </div>
-        <?php print drupal_render($sub_form['question']); ?>
+        <?php print drupal_render($question['question']); ?>
       </div>
-      <?php if (isset($sub_form['response'])): ?>
+      <?php if (isset($question['response'])): ?>
         <div class="quiz-report-response dd">
           <h3 class="quiz-report-response-header"><?php print t('Response') ?></h3>
-          <?php print drupal_render($sub_form['response']); ?>
+          <?php //print drupal_render($question['response']); ?>
+          <table class="table table-striped sticky-enabled">
+            <thead>
+            <tr>
+              <?php foreach($question['response']['#labels'] as $label) : ?>
+                <th><?php print $label; ?></th>
+              <?php endforeach; ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($question['response']['#data'] as $key => $data) : ?>
+              <tr>
+                <?php foreach ($data as $class => $value) : ?>
+                  <td class="<?php print $class; ?>"><?php print $value; ?></td>
+                <?php endforeach; ?>
+              </tr>
+            <?php endforeach; ?>
+            </tbody>
+          </table>
         </div>
       <?php endif; ?>
       <div class="quiz-report-question-feedback dd">
-        <?php print drupal_render($sub_form['question_feedback']); ?>
+        <?php print drupal_render($question['question_feedback']); ?>
       </div>
       <div class="quiz-report-score-feedback dd">
-        <?php print drupal_render($sub_form['score']); ?>
-        <?php print drupal_render($sub_form['answer_feedback']); ?>
+        <?php print drupal_render($question['score']); ?>
+        <?php print drupal_render($question['answer_feedback']); ?>
       </div>
     </div>
-    <?php endif; ?>
   <?php endforeach; ?>
   <div class="quiz-report-quiz-feedback dd">
     <?php if (isset($form['quiz_feedback']) && $form['quiz_feedback']['#markup']): ?>
@@ -66,4 +97,6 @@
     <?php endif; ?>
   </div>
 </div>
-<div class="quiz-score-submit"><?php print drupal_render_children($form); ?></div>
+<div class="quiz-score-submit">
+  <?php print drupal_render_children($form); ?>
+</div>
